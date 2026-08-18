@@ -9,12 +9,14 @@ from app.database.database import Base, engine
 from app.api.register import router as register_router
 from app.api.login import router as login_router
 from app.api.me import router as me_router
+from app.services.qdrant_service import QdrantService
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
 )
 
+QdrantService.initialize()
 app.include_router(upload_router, tags=["Upload"])
 app.include_router(chat_router, tags=["Chat"])
 app.include_router(register_router)

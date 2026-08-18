@@ -1,4 +1,3 @@
-from fastapi import APIRouter
 from pydantic import BaseModel
 from app.services.llm_service import LLMService
 from app.services.retrieval_service import RetrievalService
@@ -43,8 +42,7 @@ async def chat(request: ChatRequest,current_user: int = Depends(get_current_user
             "chunk_id": result.payload.get("chunk_id"),
             "filename": result.payload.get("filename"),
             "chunk_index": result.payload.get("chunk_index"),
-            "uploaded_at": result.payload.get("uploaded_at"),
-            "text": result.payload.get("text")
+            "uploaded_at": result.payload.get("uploaded_at")
         }
         for result in results
     ]
