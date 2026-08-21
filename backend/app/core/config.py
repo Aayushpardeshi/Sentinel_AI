@@ -10,7 +10,7 @@ class Settings(BaseSettings):
 
     QDRANT_URL: str = "http://localhost:6333"
     QDRANT_COLLECTION: str = "sentinel_documents"
-    SIMILARITY_THRESHOLD: float = 0.20
+    SIMILARITY_THRESHOLD: float = 0.0
     DATABASE_URL: str = ""
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60

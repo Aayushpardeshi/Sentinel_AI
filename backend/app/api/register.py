@@ -5,9 +5,9 @@ from app.database.database import get_db
 from app.models.user import User
 from app.schemas.auth import RegisterRequest
 from app.security.password import hash_password
+from app.services.audit_service import AuditLogService
 
 router = APIRouter()
-
 
 @router.post("/register")
 def register(
@@ -24,6 +24,8 @@ def register(
     db.add(user)
     db.commit()
     db.refresh(user)
+    
+    AuditLogService.record(db, action="REGISTER_SUCCESS", resource_type="AUTH", status="SUCCESS", user_id=user.id)
 
     return {
         "message": "User registered successfully",
