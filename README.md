@@ -23,5 +23,48 @@ Sentinel AI is an advanced, full-stack application designed to streamline docume
 - `/frontend`: The frontend React application built with Vite, TypeScript, and modern styling.
 - `/backend`: The backend Python API, managing services like OCR, retrieval, audit logs, and document handling.
 
-## Getting Started
-Please refer to the individual `frontend/` and `backend/` directories for specific setup, environment variables, and local development instructions.
+## Getting Started & How to Run Locally
+
+### Prerequisites
+- **Python 3.9+**
+- **Node.js 18+** & npm
+
+### 1. Backend Setup
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+2. Create and activate a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+3. Install the required Python dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Start the backend server (FastAPI):
+   ```bash
+   uvicorn app.main:app --reload
+   ```
+
+### 2. Frontend Setup
+1. Open a new terminal and navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. Install the node dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the frontend development server:
+   ```bash
+   npm run dev
+   ```
+
+### 3. Access the Application
+- The **frontend UI** will be available at `http://localhost:5173` (default Vite port).
+- The **backend API** will be running at `http://localhost:8000`. 
+- Access the API documentation (Swagger) at `http://localhost:8000/docs`.
+
+*Note: Ensure you have correctly configured the `.env` files in both the `frontend/` and `backend/` directories based on the `.env.example` files (if provided) before starting the servers.*
