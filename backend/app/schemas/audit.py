@@ -2,6 +2,8 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional, Any, Dict
 
+# this is for audit logs means how the audits will be displayed means who accesed what and what not 
+
 class AuditLogResponse(BaseModel):
     id: int
     user_id: Optional[int]
