@@ -47,6 +47,7 @@ Sentinel AI is an advanced, full-stack application designed to streamline docume
    ```bash
    uvicorn app.main:app --reload
    ```
+5. in future may need to start the docker container and will be deploying it on render or aws ec2 
 
 ### 2. Frontend Setup
 1. Open a new terminal and navigate to the frontend directory:
