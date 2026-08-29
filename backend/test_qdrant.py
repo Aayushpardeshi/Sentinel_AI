@@ -1,6 +1,7 @@
 from app.services.embedding_service import EmbeddingService
 from app.services.qdrant_service import QdrantService
 
+# this is for testing qdrant this is sample one
 
 chunks = [
     "Python is a programming language.",

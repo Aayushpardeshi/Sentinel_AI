@@ -2,6 +2,8 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
 
+# this tells us what all detailes of the Document will be displayed so that document filtering can be done
+
 class DocumentResponse(BaseModel):
     id: str
     filename: str

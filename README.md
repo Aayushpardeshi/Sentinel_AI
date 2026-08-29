@@ -68,4 +68,4 @@ Sentinel AI is an advanced, full-stack application designed to streamline docume
 - The **backend API** will be running at `http://localhost:8000`. 
 - Access the API documentation (Swagger) at `http://localhost:8000/docs`.
 
-*Note: Ensure you have correctly configured the `.env` files in both the `frontend/` and `backend/` directories based on the `.env.example` files (if provided) before starting the servers.*
+*Note: Ensure you have correctly configured the `.env` files in both the `frontend/` and `backend/` directories based on the `.env.example`
