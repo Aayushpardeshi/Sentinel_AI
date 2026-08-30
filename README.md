@@ -69,3 +69,29 @@ Sentinel AI is an advanced, full-stack application designed to streamline docume
 - Access the API documentation (Swagger) at `http://localhost:8000/docs`.
 
 *Note: Ensure you have correctly configured the `.env` files in both the `frontend/` and `backend/` directories based on the `.env.example`
+
+## Tech Stack
+
+### Frontend
+- **React.js** with TypeScript
+- **Vite** for fast development and building
+- **Tailwind CSS** / Custom CSS for modern styling
+
+### Backend
+- **Python 3.9+**
+- **FastAPI** for high-performance API endpoints
+- **PyTesseract / OpenCV** for Document OCR
+- **PostgreSQL / SQLite** for database (as configured in environment)
+
+## Contributing
+Contributions are welcome! If you'd like to improve Sentinel AI, please follow these steps:
+1. Fork the repository.
+2. Create a new branch for your feature or bugfix (`git checkout -b feature/your-feature-name`).
+3. Commit your changes (`git commit -m 'Add some feature'`).
+4. Push to the branch (`git push origin feature/your-feature-name`).
+5. Open a Pull Request on GitHub.
+
+Please make sure to write clear commit messages and include tests if applicable.
+
+## License
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
