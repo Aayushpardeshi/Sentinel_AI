@@ -1,3 +1,7 @@
+/**
+ * Core API configuration.
+ * Sets up axios instance with interceptors for authentication.
+ */
 import axios from 'axios';
 
 export const API_URL = 'http://localhost:8000';

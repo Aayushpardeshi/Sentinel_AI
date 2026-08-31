@@ -1,3 +1,7 @@
+/**
+ * Button component used throughout the application.
+ * Supports various variants and sizes.
+ */
 import React from 'react';
 import { cn } from '../layout/Sidebar'; // using the cn utility we made there
 

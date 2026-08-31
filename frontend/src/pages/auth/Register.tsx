@@ -1,3 +1,7 @@
+/**
+ * Registration page component.
+ * Handles new user sign-ups and validation.
+ */
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Shield } from 'lucide-react';
