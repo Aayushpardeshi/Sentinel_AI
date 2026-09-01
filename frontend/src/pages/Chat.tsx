@@ -139,3 +139,5 @@ export const Chat = () => {
     </div>
   );
 };
+
+//  this is the ui for the chat how to chat and made sure that the format of the chat is proper way
