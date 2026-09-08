@@ -95,3 +95,7 @@ Please make sure to write clear commit messages and include tests if applicable.
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
+## Project Notes
+
+This project is actively maintained and developed as part of my learning and development work.
