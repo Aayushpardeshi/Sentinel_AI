@@ -98,4 +98,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Project Notes
 
-This project is actively maintained and developed as part of my learning and development work.
+This project is actively maintained and developed as part of my learning and development work ans is self explainatory by me as core logic and implemenatation is done by me with little bit help of AI and vibe coding .
