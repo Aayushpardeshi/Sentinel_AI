@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel AI — Document Intelligence</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0b1020;
+            color: #f5f7ff;
+            min-height: 100vh;
+        }
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: #11182d;
+            border-right: 1px solid #26304d;
+            padding: 25px 18px;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .tagline {
+            color: #8994b2;
+            font-size: 12px;
+            margin-bottom: 35px;
+        }
+
+        .nav-item {
+            padding: 12px 14px;
+            margin: 6px 0;
+            border-radius: 8px;
+            color: #aeb8d0;
+            cursor: pointer;
+        }
+
+        .nav-item.active,
+        .nav-item:hover {
+            background: #202a47;
+            color: white;
+        }
+
+        .security-box {
+            margin-top: 40px;
+            padding: 15px;
+            border: 1px solid #26304d;
+            border-radius: 10px;
+            background: #0d1427;
+        }
+
+        .security-box h4 {
+            margin-bottom: 8px;
+        }
+
+        .security-box p {
+            color: #8994b2;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        /* Main */
+        .main {
+            flex: 1;
+            padding: 30px;
+            max-width: 1400px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+        }
+
+        .header p {
+            color: #8994b2;
+            margin-top: 6px;
+        }
+
+        .status {
+            background: #17233c;
+            border: 1px solid #294064;
+            padding: 9px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        .status span {
+            color: #51e39b;
+        }
+
+        /* Cards */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: #11182d;
+            border: 1px solid #26304d;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .card-title {
+            color: #8994b2;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .card-value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .card-small {
+            color: #51e39b;
+            font-size: 12px;
+            margin-top: 7px;
+        }
+
+        /* Content */
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: #11182d;
+            border: 1px solid #26304d;
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .panel h2 {
+            font-size: 18px;
+            margin-bottom: 18px;
+        }
+
+        /* Documents */
+        .document {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 13px;
+            margin-bottom: 9px;
+            background: #0d1427;
+            border-radius: 8px;
+            border: 1px solid #202a42;
+        }
+
+        .document-name {
+            font-size: 14px;
+        }
+
+        .document-meta {
+            color: #78839e;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        .badge {
+            background: #17382d;
+            color: #51e39b;
+            padding: 5px 9px;
+            border-radius: 15px;
+            font-size: 11px;
+        }
+
+        /* Chat */
+        .chat-box {
+            height: 310px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 9px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .user {
+            background: #202a47;
+            margin-left: 35px;
+        }
+
+        .ai {
+            background: #0d1427;
+            border: 1px solid #202a42;
+            margin-right: 25px;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 8px;
+        }
+
+        input {
+            flex: 1;
+            background: #0d1427;
+            border: 1px solid #303b5b;
+            border-radius: 8px;
+            padding: 12px;
+            color: white;
+            outline: none;
+        }
+
+        button {
+            border: none;
+            border-radius: 8px;
+            padding: 0 18px;
+            background: #5b7cfa;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        /* Upload */
+        .upload {
+            margin-top: 20px;
+            border: 1px dashed #3a486b;
+            border-radius: 10px;
+            padding: 22px;
+            text-align: center;
+            color: #8994b2;
+        }
+
+        .upload button {
+            margin-top: 12px;
+            padding: 10px 18px;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                display: none;
+            }
+
+            .cards,
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            .main {
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <div class="logo">🛡 Sentinel AI</div>
+
+        <div class="tagline">
+            Secure Document Intelligence
+        </div>
+
+        <div class="nav-item active">Dashboard</div>
+        <div class="nav-item">Documents</div>
+        <div class="nav-item">Ask Sentinel</div>
+        <div class="nav-item">Access Control</div>
+        <div class="nav-item">Activity Logs</div>
+        <div class="nav-item">Settings</div>
+
+        <div class="security-box">
+            <h4>🔐 Security</h4>
+            <p>
+                Your documents are isolated by user and access scope.
+                Retrieval is performed only against authorized documents.
+            </p>
+        </div>
+
+    </aside>
+
+
+    <!-- Main -->
+    <main class="main">
+
+        <div class="header">
+
+            <div>
+                <h1>Document Intelligence</h1>
+                <p>Ask questions about your organization's knowledge.</p>
+            </div>
+
+            <div class="status">
+                ● <span>System Operational</span>
+            </div>
+
+        </div>
+
+
+        <!-- Statistics -->
+        <section class="cards">
+
+            <div class="card">
+                <div class="card-title">Documents</div>
+                <div class="card-value">24</div>
+                <div class="card-small">↑ 4 this week</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Indexed Chunks</div>
+                <div class="card-value">1,842</div>
+                <div class="card-small">Vector database synced</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Queries</div>
+                <div class="card-value">137</div>
+                <div class="card-small">Secure retrieval enabled</div>
+            </div>
+
+        </section>
+
+
+        <!-- Main Content -->
+        <section class="content">
+
+            <!-- Documents -->
+            <div class="panel">
+
+                <h2>Recent Documents</h2>
+
+                <div class="document">
+                    <div>
+                        <div class="document-name">Company_Handbook.pdf</div>
+                        <div class="document-meta">
+                            42 chunks · Uploaded today
+                        </div>
+                    </div>
+
+                    <div class="badge">Indexed</div>
+                </div>
+
+                <div class="document">
+                    <div>
+                        <div class="document-name">Engineering_Changes.pdf</div>
+                        <div class="document-meta">
+                            86 chunks · Uploaded yesterday
+                        </div>
+                    </div>
+
+                    <div class="badge">Indexed</div>
+                </div>
+
+                <div class="document">
+                    <div>
+                        <div class="document-name">Project_Requirements.pdf</div>
+                        <div class="document-meta">
+                            63 chunks · Uploaded 2 days ago
+                        </div>
+                    </div>
+
+                    <div class="badge">Indexed</div>
+                </div>
+
+                <div class="document">
+                    <div>
+                        <div class="document-name">Security_Policy.pdf</div>
+                        <div class="document-meta">
+                            37 chunks · Uploaded 3 days ago
+                        </div>
+                    </div>
+
+                    <div class="badge">Indexed</div>
+                </div>
+
+                <div class="upload">
+                    <div>📄 Drop a document here</div>
+                    <small>PDF documents are supported</small>
+                    <br>
+                    <button onclick="fakeUpload()">Upload Document</button>
+                </div>
+
+            </div>
+
+
+            <!-- AI Chat -->
+            <div class="panel">
+
+                <h2>Ask Sentinel</h2>
+
+                <div class="chat-box" id="chatBox">
+
+                    <div class="message user">
+                        What is the company's document retention policy?
+                    </div>
+
+                    <div class="message ai">
+                        According to the indexed Security Policy,
+                        company documents should be retained according to
+                        their classification and regulatory requirements.
+                        <br><br>
+                        <strong>Source:</strong> Security_Policy.pdf
+                    </div>
+
+                    <div class="message user">
+                        How many days can engineering change documents be retained?
+                    </div>
+
+                    <div class="message ai">
+                        The relevant policy states that engineering change
+                        records should be retained for the duration specified
+                        by the applicable project and compliance requirements.
+                        <br><br>
+                        <strong>Source:</strong> Engineering_Changes.pdf
+                    </div>
+
+                </div>
+
+                <div class="input-area">
+
+                    <input
+                        id="question"
+                        type="text"
+                        placeholder="Ask a question..."
+                        onkeydown="handleKey(event)"
+                    >
+
+                    <button onclick="askSentinel()">Ask</button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    function askSentinel() {
+
+        const input = document.getElementById("question");
+        const chatBox = document.getElementById("chatBox");
+
+        const question = input.value.trim();
+
+        if (!question) return;
+
+        // User message
+        const userMessage = document.createElement("div");
+        userMessage.className = "message user";
+        userMessage.textContent = question;
+
+        chatBox.appendChild(userMessage);
+
+        input.value = "";
+
+        // Mock AI response
+        setTimeout(() => {
+
+            const aiMessage = document.createElement("div");
+            aiMessage.className = "message ai";
+
+            aiMessage.innerHTML = `
+                I found relevant information in the indexed
+                knowledge base for this question.
+
+                <br><br>
+
+                <strong>Source:</strong> Company_Handbook.pdf
+
+                <br><br>
+
+                <small>
+                    Demo response — connect this interface
+                    to the Sentinel AI FastAPI endpoint for
+                    real document retrieval.
+                </small>
+            `;
+
+            chatBox.appendChild(aiMessage);
+
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+        }, 600);
+    }
+
+
+    function handleKey(event) {
+
+        if (event.key === "Enter") {
+            askSentinel();
+        }
+
+    }
+
+
+    function fakeUpload() {
+
+        alert(
+            "Demo upload button clicked!\n\n" +
+            "Connect this button to your Sentinel AI /upload endpoint."
+        );
+
+    }
+
+</script>
+
+</body>
+</html>
