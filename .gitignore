@@ -5,3 +5,10 @@ __pycache__/
 uploads/
 .vscode/
 .idea/
+node_modules/
+dist/
+*.db
+*.db-journal
+backend/node-server/dev.db
+backend/node-server/uploads/
+backend/python-ai-service/.venv/

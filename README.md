@@ -1,101 +1,188 @@
 # Sentinel AI
 
-Welcome to the Sentinel AI repository!
+Sentinel AI is a secure document intelligence platform. Teams upload documents, control who can see them, and ask questions against that knowledge instead of searching files by hand.
 
-## Overview
-Sentinel AI is an advanced, full-stack application designed to streamline document management, enhance team collaboration, and leverage AI-powered data extraction. With a robust Python backend and a modern React frontend, Sentinel provides a secure and efficient workspace for handling data-sensitive workflows.
+## Real-world problem
 
-## Key Features
-- **AI-Powered OCR Extraction**: Automated data extraction from documents (e.g., Aadhaar cards) using advanced OCR pipelines.
-- **Team Collaboration**: Create teams, manage members, and collaborate on shared resources securely.
-- **Intelligent Chat Interface**: Interact with your documents using an AI chatbot that supports rich markdown formatting.
-- **Secure Document Management**: Upload, verify, and retrieve documents seamlessly.
-- **Audit Logging**: Comprehensive backend tracking of user actions and document access for compliance.
+Organizations accumulate resumes, identification documents, reports, policies, and project files. As that collection grows, people spend time opening files, searching for the same facts, and answering the same questions. Access to sensitive documents is also hard to track.
 
-## Application Flow (How it Works)
-1. **Authentication**: Users securely log in to the platform.
-2. **Team Setup**: Users can establish teams and invite members for collaborative document access.
-3. **Document Upload & Processing**: Users upload documents. The backend immediately processes these using the OCR Extraction Service to verify and pull out critical metadata automatically.
-4. **AI Interaction & Retrieval**: Users can leverage the chat interface to query their uploaded documents, retrieve specific information, or get intelligent summaries.
-5. **Activity Tracking**: Every upload, extraction, and data access event is recorded in the audit logs for security purposes.
+## What Sentinel AI does
 
-## Project Structure
-- `/frontend`: The frontend React application built with Vite, TypeScript, and modern styling.
-- `/backend`: The backend Python API, managing services like OCR, retrieval, audit logs, and document handling.
+Users upload documents and work with them in a shared, permissioned workspace:
 
-## Getting Started & How to Run Locally
+- Extract and organize document text automatically
+- Ask questions in chat and get answers grounded in uploaded files
+- Restrict access by personal workspace or team membership
+- Record important activity such as logins, uploads, access, and team changes
+
+**Core value:** Sentinel AI turns a collection of static documents into an organized, searchable, interactive knowledge workspace for individuals and teams.
+
+Example questions:
+
+- "What skills are mentioned in this resume?"
+- "What does our leave policy say about maternity leave?"
+- "Summarize the key points from this project document."
+
+## Architecture
+
+```text
+React + TypeScript (localhost:5173)
+          |
+          | HTTP/REST + JWT
+          v
+Node.js + Express API (localhost:5000)
+          |
+          |-------------------------------|
+          v                               v
+PostgreSQL / SQLite                  Python AI service
+users, teams, documents,             (localhost:8000, internal)
+audit logs, JWT, RBAC                       |
+                                     OCR-ready PDF extraction
+                                     chunking, embeddings
+                                     Qdrant, LangGraph, LiteLLM
+```
+
+The React app talks only to Node. Node owns authentication, authorization, document metadata, teams, and audit logs. Python owns embeddings, vector search, RAG, and LLM calls. Node calls Python over HTTP with `X-Internal-Service-Key`.
+
+This split exists because the application layer is a standard MERN-style API, while document intelligence depends on the Python ML stack (PyPDF, sentence-transformers, Qdrant, LangGraph, LiteLLM).
+
+## Project structure
+
+- `/frontend` — React + TypeScript + Vite UI
+- `/backend/node-server` — public Express API
+- `/backend/python-ai-service` — internal FastAPI AI service
+- `/docker-compose.yml` — Qdrant for local vector search
+
+## API contract
+
+The frontend still uses the original paths and `{ detail }` error shape:
+
+| Method | Path | Auth |
+| --- | --- | --- |
+| POST | `/register` | no |
+| POST | `/login` | no |
+| GET | `/me` | JWT |
+| GET/POST | `/teams` | JWT |
+| GET | `/teams/:teamId` | JWT |
+| POST | `/teams/:teamId/members` | JWT, OWNER/ADMIN |
+| DELETE | `/teams/:teamId/members/:userId` | JWT, OWNER/ADMIN |
+| GET | `/documents` | JWT |
+| GET/DELETE | `/documents/:documentId` | JWT |
+| POST | `/upload` | JWT, multipart PDF |
+| GET | `/search` | JWT |
+| POST | `/chat` | JWT |
+| GET | `/audit-logs` | JWT |
+| GET | `/health` and `/api/health` | no |
+
+JWT payload: `{ sub: "<user id>" }`, HS256, 60 minute expiry.
+
+## Local setup
 
 ### Prerequisites
-- **Python 3.9+**
-- **Node.js 18+** & npm
 
-### 1. Backend Setup
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-2. Create and activate a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-3. Install the required Python dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-4. Start the backend server (FastAPI):
-   ```bash
-   uvicorn app.main:app --reload
-   ```
-5. in future may need to start the docker container and will be deploying it on render or aws ec2 
+- Node.js 18+
+- Python 3.9+
+- Docker (for Qdrant)
 
-### 2. Frontend Setup
-1. Open a new terminal and navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
-2. Install the node dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the frontend development server:
-   ```bash
-   npm run dev
-   ```
+### 1. Qdrant
 
-### 3. Access the Application
-- The **frontend UI** will be available at `http://localhost:5173` (default Vite port).
-- The **backend API** will be running at `http://localhost:8000`. 
-- Access the API documentation (Swagger) at `http://localhost:8000/docs`.
+```bash
+docker compose up -d qdrant
+```
 
-*Note: Ensure you have correctly configured the `.env` files in both the `frontend/` and `backend/` directories based on the `.env.example`
+Qdrant listens on `http://localhost:6333`.
 
-## Tech Stack
+### 2. Python AI service
 
-### Frontend
-- **React.js** with TypeScript
-- **Vite** for fast development and building
-- **Tailwind CSS** / Custom CSS for modern styling
+```bash
+cd backend/python-ai-service
+python -m venv venv
+# Windows: venv\Scripts\activate
+# macOS/Linux: source venv/bin/activate
+pip install -r requirements.txt
+copy .env.example .env   # Windows
+# cp .env.example .env   # macOS/Linux
+```
 
-### Backend
-- **Python 3.9+**
-- **FastAPI** for high-performance API endpoints
-- **PyTesseract / OpenCV** for Document OCR
-- **PostgreSQL / SQLite** for database (as configured in environment)
+Set `INTERNAL_SERVICE_KEY` to the same value used by Node, and set `MISTRAL_API_KEY` (or the key required by `MODEL_NAME`).
 
-## Contributing
-Contributions are welcome! If you'd like to improve Sentinel AI, please follow these steps:
-1. Fork the repository.
-2. Create a new branch for your feature or bugfix (`git checkout -b feature/your-feature-name`).
-3. Commit your changes (`git commit -m 'Add some feature'`).
-4. Push to the branch (`git push origin feature/your-feature-name`).
-5. Open a Pull Request on GitHub.
+```bash
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
 
-Please make sure to write clear commit messages and include tests if applicable.
+The Python process is an internal service. Do not point the React app at port 8000.
+
+### 3. Node API
+
+```bash
+cd backend/node-server
+copy .env.example .env   # Windows
+# cp .env.example .env   # macOS/Linux
+```
+
+Use the same `INTERNAL_SERVICE_KEY` as Python. Then:
+
+```bash
+npm install
+npx prisma generate
+npx prisma db push
+npm run dev
+```
+
+Node listens on `http://localhost:5000`.
+
+SQLite is the default (`DATABASE_URL="file:./dev.db"`). For PostgreSQL, change the Prisma `provider` to `postgresql` and set `DATABASE_URL` to your Postgres URL, then run `npx prisma db push`. Do not run destructive reset commands against a database that already has data.
+
+### 4. Frontend
+
+```bash
+cd frontend
+copy .env.example .env   # optional; defaults to http://localhost:5000
+npm install
+npm run dev
+```
+
+UI: `http://localhost:5173`
+
+### Startup order
+
+1. Qdrant
+2. Python AI service
+3. Node API
+4. Frontend
+
+## Environment variables
+
+### Node (`backend/node-server/.env`)
+
+- `PORT`
+- `DATABASE_URL`
+- `JWT_SECRET`
+- `JWT_EXPIRES_IN`
+- `PYTHON_AI_SERVICE_URL`
+- `INTERNAL_SERVICE_KEY`
+- `CORS_ORIGIN`
+
+### Python (`backend/python-ai-service/.env`)
+
+- `INTERNAL_SERVICE_KEY`
+- `QDRANT_URL`
+- `QDRANT_COLLECTION`
+- `MODEL_NAME`
+- `MISTRAL_API_KEY` (and other LLM keys as needed)
+
+Never commit real `.env` files or expose these values to the frontend.
+
+## Roles and document access
+
+Team roles: `OWNER`, `ADMIN`, `MEMBER`.
+
+- Personal documents: only the owner
+- Team documents: any member of that team
+- Team document delete: `OWNER` or `ADMIN` only
+
+Node checks these rules before calling Python. Python still filters Qdrant results by `user_id` and `user_teams`.
 
 ## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
-## Project Notes
-
-This project is actively maintained and developed as part of my learning and development work ans is self explainatory by me as core logic and implemenatation is done by me with little bit help of AI and vibe coding .
+MIT. See [LICENSE](LICENSE).

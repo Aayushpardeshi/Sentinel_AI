@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+python-dotenv
+pydantic
+pydantic-settings
+python-multipart
+
+litellm
+langgraph
+langchain-core
+langchain-text-splitters
+
+sentence-transformers
+pypdf
+qdrant-client

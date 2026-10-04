@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int          @id @default(autoincrement())
+  email         String       @unique
+  password_hash String
+  teamsCreated  Team[]       @relation("TeamCreator")
+  memberships   TeamMember[]
+  documents     Document[]
+
+  @@index([email])
+  @@map("users")
+}
+
+model Team {
+  id         Int          @id @default(autoincrement())
+  name       String
+  created_by Int
+  created_at DateTime     @default(now())
+  createdBy  User         @relation("TeamCreator", fields: [created_by], references: [id])
+  members    TeamMember[]
+  documents  Document[]
+
+  @@index([name])
+  @@map("teams")
+}
+
+model TeamMember {
+  id        Int      @id @default(autoincrement())
+  team_id   Int
+  user_id   Int
+  role      String
+  joined_at DateTime @default(now())
+  team      Team     @relation(fields: [team_id], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([team_id, user_id], name: "_team_user_uc")
+  @@map("team_members")
+}
+
+model Document {
+  id            String   @id
+  filename      String
+  owner_user_id Int
+  scope         String
+  team_id       Int?
+  uploaded_at   DateTime @default(now())
+  status        String   @default("COMPLETED")
+  owner         User     @relation(fields: [owner_user_id], references: [id], onDelete: Cascade)
+  team          Team?    @relation(fields: [team_id], references: [id], onDelete: Cascade)
+
+  @@index([id])
+  @@map("documents")
+}
+
+model AuditLog {
+  id            Int      @id @default(autoincrement())
+  user_id       Int?
+  action        String
+  resource_type String
+  resource_id   String?
+  team_id       Int?
+  status        String
+  timestamp     DateTime @default(now())
+  metadata_info Json?
+
+  @@index([user_id])
+  @@index([action])
+  @@index([resource_type])
+  @@map("audit_logs")
+}
