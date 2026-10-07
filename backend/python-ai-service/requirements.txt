@@ -6,7 +6,6 @@ pydantic-settings
 python-multipart
 
 litellm
-langgraph
 langchain-core
 langchain-text-splitters
 
